@@ -51,3 +51,12 @@ https://github.com/veggiemonk/awesome-docker
 # github docker projects
 https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
+
+
+# python sources
+
+1.https://www.fullstackpython.com/
+2. https://pythonspot.com/
+3. https://diveintopython3.net/
+4. https://python.swaroopch.com/
+5. https://learnpython.org/ 
