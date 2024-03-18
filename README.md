@@ -60,3 +60,6 @@ https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices
 3. https://diveintopython3.net/
 4. https://python.swaroopch.com/
 5. https://learnpython.org/ 
+
+# projects : https://github.com/ndleah/python-mini-project
+
