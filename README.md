@@ -51,3 +51,27 @@ https://github.com/veggiemonk/awesome-docker
 # github docker projects
 https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
+
+---
+https://github.com/Masterminds/learning-helm/
+https://github.com/AmrAlaaYassen/ArgoCD-ApplicationSet-Demo
+
+https://github.com/MithunTechnologiesDevOps/kubernetes-ingress
+https://github.com/cloudogu/gitops-playground
+https://github.com/vikash-kumar01/Kubernetes_Project
+https://devopsdays.io/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
