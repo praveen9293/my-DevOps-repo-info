@@ -52,7 +52,6 @@ https://github.com/veggiemonk/awesome-docker
 https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
 
-
 # python sources
 
 1.https://www.fullstackpython.com/
@@ -70,3 +69,5 @@ https://github.com/MithunTechnologiesDevOps/kubernetes-ingress
 https://github.com/cloudogu/gitops-playground
 https://github.com/vikash-kumar01/Kubernetes_Project
 https://devopsdays.io/
+
+
