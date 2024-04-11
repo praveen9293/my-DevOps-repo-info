@@ -52,26 +52,22 @@ https://github.com/veggiemonk/awesome-docker
 https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
 
----
+# python sources
+
+1.https://www.fullstackpython.com/
+2. https://pythonspot.com/
+3. https://diveintopython3.net/
+4. https://python.swaroopch.com/
+5. https://learnpython.org/ 
+
+# projects : https://github.com/ndleah/python-mini-project
+
+### other
 https://github.com/Masterminds/learning-helm/
 https://github.com/AmrAlaaYassen/ArgoCD-ApplicationSet-Demo
-
 https://github.com/MithunTechnologiesDevOps/kubernetes-ingress
 https://github.com/cloudogu/gitops-playground
 https://github.com/vikash-kumar01/Kubernetes_Project
 https://devopsdays.io/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
