@@ -16,7 +16,7 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/confi
 
 kubectl -n kube-system get all
 
-#configuration for kube-proxy which stored as configmap
+# configuration for kube-proxy which stored as configmap
 
 kubectl -n kube-system get cm
 kubectl -n kube-system describe cm kube-proxy | less
@@ -29,7 +29,7 @@ kubectl get nodes -o wide
 
 give the same cidr range for metallb
 
-#1.install 2.configure for using set of ip addresses using configmap # crd
+# 1.install 2.configure for using set of ip addresses using configmap # crd
 
 ------------------------------
 
@@ -37,7 +37,7 @@ give the same cidr range for metallb
 
 https://metallb.universe.tf/installation/
 
-##click on start deploying resources.
+# click on start deploying resources.
 https://metallb.universe.tf/configuration/
 
 Layer 2 Configuration
@@ -56,7 +56,7 @@ spec:
   addresses:
   - 192.168.49.240-192.168.49.250
 
-##kubectl apply -f ipaddresspool.yaml
+# kubectl apply -f ipaddresspool.yaml
   kubectl get ipaddresspool.metallb.io -A
   kubectl describe  ipaddresspool.metallb.io first-pool -n metallb-system
   
@@ -72,7 +72,7 @@ spec:
   ipAddressPools:
   - first-pool
   
-  ##kubectl apply -f L2Advertisement.yaml
+  # kubectl apply -f L2Advertisement.yaml
     kubectl get l2advertisement.metallb.io -A
     kubectl describe l2advertisement.metallb.io/example -n metallb-system
 --------------------------------
