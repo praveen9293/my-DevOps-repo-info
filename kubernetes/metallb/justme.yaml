@@ -10,26 +10,26 @@ https://github.com/justmeandopensource/kubernetes
 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
 
-##Don't apply any yaml manifest directly in production server , before just read the content of yaml like below.
+# Don't apply any yaml manifest directly in the production server , before just read the content of yaml like below.
  
-##curl -s https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml | less
+# curl -s https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml | less
 
 kubectl -n kube-system get all
 
-#configuration for kube-proxy which stroed as configmap
+#configuration for kube-proxy which stored as configmap
 
 kubectl -n kube-system get cm
 kubectl -n kube-system describe cm kube-proxy | less
 
 
-/mode   (serach for it)
+/mode   (search for it)
 
 
 kubectl get nodes -o wide
 
 give the same cidr range for metallb
 
-#1.install 2.configure for using set of ip addresses using configmap ##crd
+#1.install 2.configure for using set of ip addresses using configmap # crd
 
 ------------------------------
 
@@ -42,10 +42,10 @@ https://metallb.universe.tf/configuration/
 
 Layer 2 Configuration
 
-##kubectl get nodes -o wide
+# kubectl get nodes -o wide
 
 ---------------------------------
-##vim ipaddresspool.yaml
+# vim ipaddresspool.yaml
 
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -61,7 +61,7 @@ spec:
   kubectl describe  ipaddresspool.metallb.io first-pool -n metallb-system
   
 ---------------------------------
-##vim L2Advertisement.yaml
+# vim L2Advertisement.yaml
 
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -87,4 +87,5 @@ spec:
  paste  <load balancer ip>  in browser
  
  
+
 
