@@ -1,0 +1,90 @@
+[ MongoDB 5 ] Backup & Restore MongoDB database
+
+
+[ Kube 33 ] Set up MetalLB Load Balancing for Bare Metal Kubernetes
+https://github.com/metallb/metallb
+https://github.com/justmeandopensource/kubernetes
+
+-----------------------------
+[ Kube 33.1 ] How to deploy & use MetalLB in bare metal Kubernetes
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+
+##Don't apply any yaml manifest directly in production server , before just read the content of yaml like below.
+ 
+##curl -s https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml | less
+
+kubectl -n kube-system get all
+
+#configuration for kube-proxy which stroed as configmap
+
+kubectl -n kube-system get cm
+kubectl -n kube-system describe cm kube-proxy | less
+
+
+/mode   (serach for it)
+
+
+kubectl get nodes -o wide
+
+give the same cidr range for metallb
+
+#1.install 2.configure for using set of ip addresses using configmap ##crd
+
+------------------------------
+
+[ Kube 33.2 ] Deploy MetalLB in Kubernetes | Load Balancing solution
+
+https://metallb.universe.tf/installation/
+
+##click on start deploying resources.
+https://metallb.universe.tf/configuration/
+
+Layer 2 Configuration
+
+##kubectl get nodes -o wide
+
+---------------------------------
+##vim ipaddresspool.yaml
+
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.49.240-192.168.49.250
+
+##kubectl apply -f ipaddresspool.yaml
+  kubectl get ipaddresspool.metallb.io -A
+  kubectl describe  ipaddresspool.metallb.io first-pool -n metallb-system
+  
+---------------------------------
+##vim L2Advertisement.yaml
+
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: example
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - first-pool
+  
+  ##kubectl apply -f L2Advertisement.yaml
+    kubectl get l2advertisement.metallb.io -A
+    kubectl describe l2advertisement.metallb.io/example -n metallb-system
+--------------------------------
+ # kubectl  -n metllb-system get all   #now all pods should be running fine
+ 
+ Testing:
+ kubectl create deploy nginx --image nginx
+ kubectl expose deploy nginx --port 80 --type LoadBalancer
+ 
+ kubectl get all
+ curl <load balancer ip>  
+ paste  <load balancer ip>  in browser
+ 
+ 
+
