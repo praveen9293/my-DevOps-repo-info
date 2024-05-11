@@ -415,7 +415,7 @@ kubectl expose deploy nginx-deploy-green --port 80 -n example
 kubectl apply -f ingress-resource-3.yaml -n example
 
 # sudo vi /etc/hosts
-    192.168.49.240  nginx.example.com
+    192.168.49.240  nginx.example.com   # ip given by metallb as svc type LoadBalancer
 
 kubectl -n example get all
 kubectl get ing -n example
