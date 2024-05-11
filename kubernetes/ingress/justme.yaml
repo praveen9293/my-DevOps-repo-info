@@ -1,1 +1,639 @@
 ## first
+To summarise, Ingress defines the rules for routing external traffic, IngressClass specifies the desired Ingress Controller for implementing those rules, and the Ingress Controller is responsible for handling the traffic and forwarding it to the appropriate services.
+
+#### cognixia ####
+
+#ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+     paths:
+     - path: /index.html
+       pathType: ImplementationSpecific
+       backend:
+        service:
+          name: nginx
+          port:
+            number: 80
+     - path: /tomcat
+       pathType: ImplementationSpecific
+       backend:
+        service:
+          name: tomcat
+          port:
+            number: 8080
+            
+            
+ ************************************
+ installed flannel cni in minikube
+ installed metallb
+ configured metallbe ip ranges with configmap
+            
+ ************************************
+ ##minikube start --wait=false
+ https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
+ 
+ 
+ just me and opensource     #just me nginx ingress
+        
+[ Kube 31 ]. https://www.youtube.com/watch?v=chwofyGr80c
+[ Kube 31 ] Set up Nginx Ingress in Kubernetes Bare Metal
+
+# service will be responsible for load balancing to pods
+# ingress controller can be deployed as Deployment/Daemonset
+
+haproxy will load balance b/n the worker nodes, #haproxy.cfg we have given ip of worker nodes
+ingress controller knows how to route the traffic.
+if we don't use dns server , add entries at /etc/hosts:<load balancer ip> <hostname>
+
+-----------------------------------
+just me and opensource:
+
+https://github.com/justmeandopensource/kubernetes/tree/master/yamls/ingress-demo
+
+
+##nginx ingress
+https://github.com/kubernetes/ingress-nginx
+click on getting started; click on using helm 
+##https://github.com/kubernetes/ingress-nginx/blob/main/docs/deploy/index.md
+
+*****************
+without ingress resource/rules: ingress controller doesn't know where the traffic forward to (error as : 404 not found)  ##add annotation to the ingress resource in metadata section 
+*****************
+---------------------
+[ Kube 59 ] pathbased 
+kubernetes ingress   ##installed through helm  same as [ Kube 31 ]
+
+https://github.com/justmeandopensource/kubernetes/tree/master/yamls/ingress-demo
+ 
+ ## vim nginx-deploy-main.yaml
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy-main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx-main
+  template:
+    metadata:
+      labels:
+        run: nginx-main
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+ 
+ ## vim nginx-deploy-blue.yaml
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx-blue
+  template:
+    metadata:
+      labels:
+        run: nginx-blue
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>I am <font color=blue>BLUE</font></h1>" > /webdata/index.html']
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+ 
+ ## vim nginx-deploy-green.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx-green
+  template:
+    metadata:
+      labels:
+        run: nginx-green
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: web-content
+        image: busybox
+        volumeMounts:
+        - name: webdata
+          mountPath: "/webdata"
+        command: ["/bin/sh", "-c", 'echo "<h1>I am <font color=green>GREEN</font></h1>" > /webdata/index.html']
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+          
+          
+## kubectl apply -f nginx-deploy-main.yaml -f  nginx-deploy-blue.yaml -f  nginx-deploy-green.yaml
+
+kubectl expose deploy nginx-deploy-main --port 80
+kubectl expose deploy nginx-deploy-blue --port 80
+kubectl expose deploy nginx-deploy-green --port 80
+
+kubectl get svc -A
+
+Note: add annotations for below yaml
+
+##vim ingress-resource-1.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: ingress-resource-1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-main
+            port: 
+              number: 80
+
+kubectl apply -f ingress-resource-1.yaml 
+The Ingress "ingress-resource-1" is invalid: annotations.kubernetes.io/ingress.class: Invalid value: "nginx": can not be set when the class field is also set
+
+# so remove annotations: & redeploy
+
+kubectl get ing
+kubectl describe ing ingress-resource-1
+
+kubectl get svc -A
+
+##how to my host system know if i type nginx.example.com in the browser.it's not going to find out what is nginx.example.com
+
+sudo vi /etc/hosts
+192.168.49.241(loadbalancer's ip)  nginx.example.com
+#15min
+kubectl get ingress
+kubectl delete ing ingress-resource-1
+
+
+# vim ingress-resource-2.yaml
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-resource-2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-main
+            port:
+              number: 80
+  - host: blue.nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-blue
+            port:
+              number: 80
+  - host: green.nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-green
+            port:
+              number: 80
+              
+ # kubectl apply -f  ingress-resource-2.yaml
+    kubectl get ing
+    kubectl describe ing ingress-resource-2
+ # sudo vi /etc/hosts
+    192.168.49.241  nginx.example.com  blue.nginx.example.com green.nginx.example.com      
+    kubectl delete ing ingress-resource-2
+
+# above is top level routing , for each application we have specified dns name.
+-----------------------------------------
+# one dns to redirect diff services based on the path of url 
+
+vim ingress-resource-3.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: ingress-resource-3
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-main
+            port:
+              number: 80
+      - path: /blue
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-blue
+            port:
+              number: 80
+      - path: /green
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-deploy-green
+            port:
+              number: 80
+
+kubectl apply -f ingress-resource-3.yaml
+
+ # sudo vi /etc/hosts
+    192.168.49.241  nginx.example.com
+    
+    
+    test in browser nginx.example.com/green
+annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    
+    if we don't specify  above annotations: /green & /blue will not work, but main dns url  will work
+ --------------------------------------
+[ Kube 59.1 ]   ##tried in diff namespace
+Note: ingress resource/rule has to reside in the same namespace as that of  deployment & service, But ingress controller & workloads  can be deployed in any  namespace.
+
+##here deployments: nginx-deply-main.yaml blue/green.yaml
+##ingress-resource-3.yaml
+
+---------------------
+kubectl get crds | grep cert-manager
+kubectl get clusterissuers
+kubectl describe clusterissuers letsencrypt-staging
+kubectl delete clusterissuers letsencrypt-staging
+
+
+
+
+**************************************
+
+
+                            
+                            
+------------------------------------
+1.ingress controller 2.deploy & svc 3.ingress resource (routing rules)                       
+
+1.all are in default namespace
+2.all are in example namespace
+3.ingress cont in default;  ingress resource, deploy & svc are  in example namespace
+4.ingress cont & resource are  in default namespace ; deploy & svc are in example namespace                         
+                            
+ kubectl get node
+ helm version
+ 
+ Type1: Default namespace                        
+ helm install nginx-ingress stable/nginx-ingress                           
+ helm list
+ kubectl get all 
+ 
+ (or)      
+               
+ helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace default --create-namespace  
+
+
+ helm list
+ kubectl get all
+ 
+ ## kubectl apply -f nginx-deploy-main.yaml -f  nginx-deploy-blue.yaml -f  nginx-deploy-green.yaml
+
+kubectl expose deploy nginx-deploy-main --port 80
+kubectl expose deploy nginx-deploy-blue --port 80
+kubectl expose deploy nginx-deploy-green --port 80
+
+kubectl apply -f ingress-resource-3.yaml
+kubectl get svc
+
+
+# sudo vi /etc/hosts
+    192.168.49.240  nginx.example.com
+    
+    if we don't specify correct loadbalancer ip address below error will come
+    This site can’t be reached https://nginx.example.com/ is unreachable.
+ERR_ADDRESS_UNREACHABLE
+
+
+
+Delete everything:
+
+kubectl delete svc nginx-deploy-blue nginx-deploy-green nginx-deploy-main
+kubectl delete deploy nginx-deploy-blue nginx-deploy-green nginx-deploy-main
+kubectl delete -f ingress-resource-3.yaml
+helm uninstall ingress-nginx
+kubectl get all
+
+----------------
+Type2: example namespace
+kubectl create ns example
+helm install nginx-ingress stable/nginx-ingress -n example
+
+(or)
+
+ helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace example --create-namespace
+
+
+# kubectl -n example get all
+
+ #  kubectl apply -f nginx-deploy-main.yaml -f  nginx-deploy-blue.yaml -f  nginx-deploy-green.yaml -n example
+
+kubectl expose deploy nginx-deploy-main --port 80 -n example
+kubectl expose deploy nginx-deploy-blue --port 80 -n example
+kubectl expose deploy nginx-deploy-green --port 80 -n example
+
+kubectl apply -f ingress-resource-3.yaml -n example
+
+# sudo vi /etc/hosts
+    192.168.49.240  nginx.example.com
+
+kubectl -n example get all
+kubectl get ing -n example
+
+# delete everything , by simply deleting namespace
+kubectl delete ns example
+
+Type3: 
+# ingress cont in default;  ingress resource, deploy & svc are  in example namespace
+
+
+503 Service Temporarily Unavailable - if we don't deploy pods & svc , but deployed ingress resource
+
+Type4:
+ingress cont & resource are  in default namespace ; deploy & svc are in example namespace
+
+# delete ingress resource & deploy it in  default namespace
+
+kubectl delete -f ingress-resource-3.yaml -n example     ####404 Not Found  (if we access from the browser)
+
+kubectl apply -f ingress-resource-3.yaml  ##503 Service Temporarily Unavailable
+
+Note:
+# ingress resource should in the same namespace as that of deployment & svc
+
+kind : Ingress (namespaced), but kind: IngressClass is (not namespaced)
+
+# Can we list the resources with name/shortname/kind ?
+
+**************************************
+
+**[ Kube 59.2 ] #host & path based routing. (not working)
+
+##3min 30 sec about repo name & chart name explanation
+##helm install [RELEASE_NAME] ingress-nginx/ingress-nginx
+                               (repo-name) / (chart-name)
+                               
+                               
+kubectl get nodes -o wide
+kubectl -n metallb-system  get all
+
+https://kubernetes.github.io/ingress-nginx/deploy/
+----------------------------------
+ helm repo list          (didn't try)
+ helm search repo ingress
+ 
+ helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+---------------------------(or)
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx         (tried)
+helm repo update
+helm repo list
+helm search repo ingress
+helm show values ingress-nginx/ingress-nginx > nginx-ingress-values.yaml
+
+----------------------------
+(or)       (chart name is wrong ingress-nginx: it will create empty nginx-ingress-values.yaml)
+helm show values ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx > nginx-ingress-values.yaml (or)
+  
+  helm show values ingress-nginx  --repo https://kubernetes.github.io/ingress-nginx > nginx-ingress-values.yaml (official docs)
+-------------------------------------
+
+##vi nginx-ingress-values.yaml
+(enable if the cluster is bootstrapped with kubeadm tool)
+hostNetwork: true
+hostPort:
+  enabled: true
+  
+  
+kind: DaemonSet
+
+kubectl create ns ingress-nginx
+helm install mynginx ingress-nginx/ingress-nginx -n ingress-nginx --values nginx-ingress-values.yaml
+helm list -n ingress-nginx
+kubectl -n ingress-nginx get all
+(## from above helm install : service/mynginx-ingress-nginx-controller will be deployed)
+
+-------------------------(or)
+          
+            -------------------(didn't try)
+            helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace  --values nginx-ingress-values.yaml                             
+                               
+--------------------------
+kubectl apply -f nginx-deploy-main.yaml
+kubectl expose deploy nginx-deploy-main --port 80
+kubectl get all
+                              
+kubectl apply -f ingress-resource-1.yaml
+(ingress will direct the traffic to cluserip service)                 
+kubectl get ing
+kubectl describe ing ingress-resource-1
+                               
+               ingress controller will run on all the worker nodes
+                               
+# update sudo vi /etc/hosts & test in the browser
+# (delete the ##ingress-resource-1.yaml before creating other ing-resource)
+                     
+            # ingress-resource-2.yaml   (host based routing)
+            # ingress-resource-3.yaml   (path based routing)
+                            
+# (for each ing-resource create 3 deploy , expose & check in the browser)                              
+                               
+                               
+                               
+------------------------------------------------
+
+[ Kube 1.5 ] Set up highly available Kubernetes cluster step by step  | Keepalived & Haproxy                  
+****************
+ 
+[ Kube 106.1 ] Kubernetes Ingress setup and the ingressClassName field
+
+----------------ing-resource we need to add  below line
+spec:
+  ingressClassName: nginx  ##otherwise will get '404 not found' error
+----------------
+*********************************
+
+[ Kube 106.2 ] Kubernetes ingress | Set up a default ingress class
+---------------------------
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+---------------------------            
+         
+  kubectl get ingressclass
+  kubectl describe ingressclass  nginx
+  
+  # after deploying ing-resource  ##kubectl get ing
+  
+  #  curl nginx.example.com  ('404 not found') & if we don't deploy 'ing-resource' 
+  
+  Note: we don't need to define ingressclass in any ingress resources/rules, if we make ingressclass default is enabled.
+  (if we are using 1 ing-controller , then would have just one ing-class , so make that ing-class as default )
+    # look at the logs of ingress controller pod (why 404 not found error is coming)
+  
+  method1 do it while installing through helm
+  method 2 edit after deployment
+  
+  k get ingressclass
+  #https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class
+  k edit ingressclass #add default ingressclass field
+  # delete the ingress resource  & redeploy with new changes
+  
+  # curl nginx.example.com  (will get welcome page now)
+  
+  # look at the logs of ingress controller pod now it detects the latest changes
+  
+  # delete helm release & ing-resource
+  -----------------------------------------
+  
+  helm show values ingress-nginx  --repo https://kubernetes.github.io/ingress-nginx > nginx-ingress-values.yaml
+
+vi nginx-ingress-values.yaml
+   ingressClassResource   : default true
+  
+  
+  ----------------------------------------
+            helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace  --values nginx-ingress-values.yaml
+  
+ -----------------------------------------
+  
+[ Kube 106.3 ]Kubernetes Ingress | Sticky Sessions
+  https://kubernetes.github.io/ingress-nginx/examples/affinity/cookie/
+  # click on session affinity example Ingress to test this:   
+       https://kubernetes.github.io/ingress-nginx/examples/affinity/cookie/ingress.yaml
+       
+       
+------------------------------------------
+chatgpt:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  namespace: my-namespace
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /myapp
+            pathType: Prefix
+            backend:
+              service:
+                name: my-service
+                port:
+                  number: 80
+
+
+
+
+
+----------------------------------------------
+kubectl apply -f ingress-resource-3.yaml 
+Error from server (BadRequest): error when creating "ingress-resource-3.yaml": admission webhook "validate.nginx.ingress.kubernetes.io" denied the request: host "nginx.example.com" and path "/" is already defined in ingress default/ingress-resource-2
+
+----------------------------------------------
+curl blue.nginx.example.com
+curl: (6) Could not resolve host: blue.nginx.example.com
+#update blue.nginx.example.com in /etc/hosts
+----------------------------------------------
+kubectl edit ing ingress-resource-2    (we can edit directly)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
