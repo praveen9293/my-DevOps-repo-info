@@ -1,4 +1,7 @@
 ## first
+# why ingress is preferred to use instead of LoadBalancer service, how will it reduce the cost, if we have type : LoadBalancer any way it will create LoadBalancer service ?
+# all the LoadBalancer services routed traffic from ingress how & what is the use of ingress when already many LoadBalancer services are created ?
+
 To summarise, Ingress defines the rules for routing external traffic, IngressClass specifies the desired Ingress Controller for implementing those rules, and the Ingress Controller is responsible for handling the traffic and forwarding it to the appropriate services.
 
 #### cognixia ####
