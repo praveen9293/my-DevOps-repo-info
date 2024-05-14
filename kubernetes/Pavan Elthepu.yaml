@@ -1,0 +1,26 @@
+Pavan Elthepu: https://www.youtube.com/watch?v=YFnzVaZsKK8
+
+minikube start --vm=true -p ingress-cluster #(clustername) --vm=true takes hyperkit
+create deploy & svc 
+minikube addons enable ingress -p ingress-cluster
+kubectl get po -n ingress-nginx
+kubectl get svc -n ingress-nginx   (nodeport type will be created, aws for LoadBalancer type)
+
+minikube ip -p ingress-cluste
+sudo vim /etc/hosts
+192.168.49.2 nginx-demo.com # on cloud we will map the cname to the LoadBalancer.
+
+
+
+https://github.com/pelthepu/Kubernetes/blob/master/resources/todo-ui-api.yaml
+
+# 18 min need this for path based only not for host based.
+annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1  
+path based
+sudo vim /etc/hosts
+192.168.49.2 todo.com    # in browser todo.com ; todo.com/api/api/todos
+host based:
+sudo vim /etc/hosts
+192.168.49.2 todo-ui.com     # in browser todo-ui.com
+192.168.49.2 todo-api.com    # in browser todo-api.com/api/todos
