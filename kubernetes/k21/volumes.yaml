@@ -1,0 +1,1096 @@
+https://thegoodbug.com/products/metabolically-lean-weight-management?variant=43748465148129&utm_source=google&utm_medium=paid&utm_campaign=20977838767&utm_content=163844449411&utm_term=&gadid=688966039605&gclid=CjwKCAiAibeuBhAAEiwAiXBoJELwBk_o2JvrKuzvpW9BQgX0FT1y0BwiI152gvuo2-WuOuaAd0O3URoCO-oQAvD_BwE
+
+
+---------------------------------------
+i@praveen1
+
+https://learning.edx.org/course/course-v1:MITx+6.00.1x+1T2024/home
+
+python course
+-----------------------------
+
+minikube ssh
+
+######### Doubts ****************
+what type of the data is stored in k8s 'etcd'
+what are the resources in k8s , can be edited/modified after their creation.
+best practice to delete the secrets.yaml from the server once it is deleted. 
+etcd(capacity depends on master) will take storage from master node
+------------------------------
+
+
+find the exact commands from k8s/other(nfs) official docs for all the labs provided by k21 (ex.bootstrapping multinode k8s cluster)
+
+### Tools  for presentation
+abhishek veeramulla (YT): tutorialspoint (FREE ONLINE WHITEBOARD)
+trainwithshubham
+k21academy
+kalyan:
+mudasir: excelidraw
+DevOps & Cloud with siva
+DevOps madeeasy (YT)
+
+volumes: (static/dynamic) pv,pvc,configmap,secrets
+rbac,netpol,admission controller,
+service account: Every namespace gets a default ServiceAccount upon creation.
+(statefulset,elk,ingress,tls/ssl)
+
+15.aks, github actions on azure
+20.project assignments
+minikube setup on aws,azure
+
+https://k21academy.s3.us-west-2.amazonaws.com/Docker+%26+Kubernetes/Activity+Guide/Projects/AG_Bootstrap_Highly_Available_Multinode_K8s_Cluster_ed2.pdf
+
+bootstrap k8s cluster with ubuntu/normal user not with root user.
+bootstrap minikube with root user
+
+=> setting alias for k8s commands ex.kubectl
+
+configure secrets with : hashicorp vault
+
+
+Q1.In sts, if we login to pod/container & delete data, will it be deleted in pv as well (efk in my case.) 
+ 2.if we delete pv,pvc; data at nfs also be deleted? 
+Ans: It's based on reclaim policy
+
+23) 2107  Docker Certified Associate (DCA) - 7 Recorded sessions
+2110 DCA
+36). Bonus 2009 - CICD Implementation with Git & Jenkins on AKS
+
+2307 cka https://k21academy.com/topic/230909-cka-day-10-introduction-to-volume-and-persistent-storagepv-pvc/
+
+******************************
+
+
+2401 batch: Kalyan Mahalingam Feb 4 2024 (shared docs to etherpad)
+            (git clone  https://github.com/ashishrpandey/kubernetes-training.git)
+
+
+Day-9: 
+1hr12min: RBAC
+kubectl config view
+kubectl api-resources
+
+etcd won't have any control on yaml manifest files
+how kubectl command is running?: kubectl get po -v=8
+I0220 10:47:12.546307    2993 loader.go:373] Config loaded from file:  /root/admin.conf
+
+cat /root/admin.conf
+In rollback =>  revision(current status) (i.e.count) not on history
+
+
+
+1h55min
+kubectl get po,rs
+kubectl get volumes/volume
+error: the server doesn't have a resource type "volumes"
+kubectl api-resources    (no volumes in the list)
+
+If we have more than 1 container in a pod first one will be the default
+If 2 containers are sharing the same volume , we can see the data of one container from another container.
+curl <pod ip>:80
+
+kubectl exec -it fortune -- bash
+ps -ef
+kubectl explain pod.spec
+kubectl explain pod.spec.volumes (node selector may not be useful for (hostpath) node level volumes)
+empty dir : is pod volume
+
+hostpath: node volume
+hostpath (dir) will be created on the worker node wherever the pod is created.
+kubectl apply -f mongodb-pod-hostpath.yaml
+when we create the file from container it will store on hostpath only, but all the data on volume(hostpath) we can see it from volume mount(container)
+but the data will be available on that worker node only , not all nodes
+kubectl exec -it  mongodb -- bash
+cd /data/db 
+touch from-container.txt
+delete & create the same pod, it will have data , since volume is storing the data
+
+** we can't store data  in cluster, since cluster is not a physical component
+If not the hostpath , it has to be totally outside the cluster.
+worker nodes can access it, pods can access it , even the entire cluster is deleted while data is persisted.
+
+mount path is in container
+
+The mount path is going to reflect the data of volume. changes are happening in volume only not from mountpath (just mirror , not inserting/synchronising)
+
+do we need to create a host path manually  /tmp/mongodb: no it will create , if the directory is  there already it will use that.
+
+container(mountpath ) will not store anything created from it will show at volume
+
+pod/container just reflecting the data from volume not storing so delete a pod not a problem
+
+if node is crashed we still lose the data in hostpath of the node
+--------------------------
+
+Day-10:
+kubectl explain pod.spec.volumes
+vi  gitrepo-volume-pod.yaml
+kubectl apply -f gitrepo-volume-pod.yaml
+
+hostpath: path will be specified as per yaml manifest
+emptydir{} : where will it store : any path /var/lib/docker? (stores temporarily & deletes when pod is deleted)
+
+lab: 1hr
+06-storage# 
+kubectl apply -f mongodb-pv-hostpath.yaml
+kubectl apply -f mongodb-pvc.yaml
+kubectl apply -f mongodb-pod-pvc.yaml
+# reuse of pv will be depends on reclaim policy
+if it is retained: we can't use it for any other pv. I need to delete it.
+1hr 23: (nfs/normal: data will be safe ,after deletion of pvc)
+deletion of pvc how can we retrieve the data : it's only run time (pvc), we can recreate it by applying the same yaml config.
+
+(if there are diff/same mount paths,  those are diff containers)
+if we apply kubectl delete all --all deleted from etcd server (no data will be deleted on s3,nfs)
+
+2hr: Dynamic PV: 
+
+
+########################## 4 feb rbac
+
+Day-11 (having probs dynamic volume,hpa)
+48min
+1hr: resource quota: as per k21 docs
+kubectl explain pods.spec.containers
+
+1hr:50min hpa : k21 docs
+scheduler also monitors the data (node), but can't be accessible,metric server monitors the data it is accessible.
+metric server itself is a process  running background to collect info , with some privileges.
+normal scaling : manual
+hpa: dynamic
+rbac: 2hr10min
+metric server: autoscale based on cpu,memory & no of pods
+------------------------
+Q.
+we are using 10gb pv,pvc we need to increase it after 1 year to 20 gb, what should be done?
+1.delete pv/pvc create &attach with same configuration increased capacity
+2.use dynamic volume
+3.use statefulset , scale the replicas , so that capacity will be increased automatically.
+
+if we can't increase the replicas , so try to increase the pv in bound state only 
+------------------------
+
+Day-12:
+scheduling: k21 docs
+*********** bookmark & modify the names of k21 docs for easy access
+nodeselector:
+Even if we remove the label for a node , the already scheduled pod will run without any problem but fail to run if it is restarted.
+scheduler comes into picture during the process of creation only.
+nodeAffinity:
+51:30 min
+execution status: pods which are already running
+
+
+1hr 35: nodeAntiAffinity: weight (1)can be any number , matching rules is important & give diff num for every rule.
+
+node affinity is pod level 
+1hr54: taints  node level & toleration is pod level : k21 docs
+ pod will be scheduled to node if toleration matches with taint.
+ 
+ kubectl explain pod.spc
+ 
+ nodename: hardcode node name in yaml manifest
+ nodeselector: multiple nodes can have the same key:value (label) 
+ node affinity/anti affinity:
+## 2h25min: pod affinity
+
+
+Day-13: based on k21 docs
+have a look : load generator of hpa 
+### pod resource limit & requests should be in the same range as hps definition.
+
+TO increase nodes : eks/aks
+To increase the pods: controllers(manual)/hpa(automatic)
+
+50min: rbac
+2hrs : Network policy
+
+logs are not complete responsibility of k8s , it comes from whatever written inside application  (app-> Dockerfile -> image)
+code written like this in app => Console.Error.WriteLine ; then will get logs.
+
+*** security at container/pod/node/cluster level
+
+
+****************
+
+mudasir 2311 batch
+https://excalidraw.com/
+
+to make diagrams open incognito mode
+
+if we delete yaml/helm  manifest of deploy will it delete pv & pvc or do we need to remove manually
+for both static & dynamic pv?
+
+pvc access modes?
+
+data persistence/availability:
+
+container level: without volume (if container dies we lose the data # exec into pod kill pid1 )
+pod level: emptydir (if pod dies we lose the data)
+node level: hostpath (if node dies we lose the data)
+not interested cluster level for now
+beyond k8s cluster level: pv & pvc (static pv & dynamic pv)
+
+deploy pod with pv & pvc , delete the node where pod is deployed , it automatically  redeployed to another worker node.
+(watch kubectl get pods -o wide)
+
+container/pod will not write directly to the nfs , node is writing to nfs (pv) read write once (from one node at a time)
+the volume can be mounted as read-write by a single node.
+delete pod,pvc & pv.
+
+Dynamic pv:
+for on-premise cluster, create a provisioner deployment , use that provisioner to create sc, referring to sc create pvc & then pv automatically get created.
+
+how do we know : pv,pod total/used storage in k8s cluster?
+
+********************
+
+
+2310 batch harsha 1hr 20 min    (paint for documentation)
+we can create resource quota for each namespace so that we can restrict
+
+used k21 docs  for nfs pv
+2hr20min: Dynamic Volume provision
+github nfs-subdir-external-provisioner
+https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner  (select tag version 4)
+https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/tree/v4.0.2
+https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/tree/v4.0.2/deploy
+
+****************************
+2309 :mudasir
+ Day-8:
+
+1hr31min
+https://github.com/syedmudasir20/kubernetes-content/blob/main/static-nfs-pv.yml
+https://github.com/syedmudasir20/kubernetes-content/blob/main/static-nfs-pvc.yml
+https://github.com/syedmudasir20/kubernetes-content/blob/main/mongo.yaml (make small changes)
+
+1hr54min: Dynamic Volume provision
+ 
+# vim dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        args: ["--dbpath", "/data/db"]
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: "praveen"
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: "praveen@123"
+         
+  
+vim svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-svc
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+    nodePort: 32000
+  selector:
+    app: mongo 
+  type: NodePort
+  
+ --------------------------
+ ## we need a client to access the data from outside, install mongo compass
+https://www.mongodb.com/docs/compass/master/install/
+
+curl ifconfig.io
+mongodb://localhost:27017
+mongodb://172.210.81.19:32000
+
+Advanced Connection Options: Authentication: username/password
+connect.
+
+create one database: on mongo client
+[paymentdb   paymentinfo ]
+add data: insert doc: (assume application is creating this data copy paste first line last digit)
+ "paymentid": "65dd7c08d773c8f78155f848",
+ "paymentid": "65dd7c08d773c8f78155f849",
+ "paymentid": "65dd7c08d773c8f78155f8410"
+ insert
+-----------------------------
+a mongo container is running inside the pod.
+
+kubectl exec -it mongo-d7c88fc85-pkd87 -- /bin/bash
+ps -aux
+kill 1 (crashing my container intentionally)
+
+ mongo compass
+ connect; disconnect; connect again with same creds
+ We lost the payment database. since placing the data at container level
+ 
+ 2.place application  data at pod level, then multiple containers read/write the data
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        args: ["--dbpath", "/data/db"]
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: "praveen"
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: "praveen@123"
+        volumeMounts:
+        - mountPath: /data/db
+          name: payment-db
+      volumes:
+      - name: payment-db
+        emptyDir:
+
+----------------------------
+ kubectl replace -f dep.yaml --force
+ 
+ # mongo-compass : login with same creds : create a database:
+ 
+ (user-info  user-profile)
+ 
+ {
+  "user1": "mohan",
+  "user2": "praveen"
+}
+
+# application is generating this data, database is persisting.
+
+kubectl get po -o wide
+kubectl exec -it mongo-5b8cf5957-9tjnv -- /bin/bash
+
+ps -aux
+kill 1
+kubectl get po 
+
+ mongo compass
+ connect; disconnect; connect again with same creds
+ user-info database still exists
+ ## data has persisted even container restarts
+ 
+ docker volumes stored at /var/lib/docker
+#  kubelet is managing pod in k8s:  k8s volumes stored at /var/lib/kubelet      (worker node where pod is running)
+root@worker-01:/var/lib/kubelet/pods
+
+how to know uid of a pod : describe pod
+** command will help us to get info from etcd: kubectl edit pod # but we don't allow anyone to do it.
+kubectl get po <podname> -o yaml
+
+(/var/lib/kubelet/pods/ccdd8d36-35a9-41b0-b215-1d0df5ba5df0/volumes/kubernetes.io~empty-dir/payment-db)
+
+## This is where the pod is going to store our data on the worker node for the above specified emptydir volume. it is dynamically created.
+
+kubectl delete po  
+
+
+/var/lib/kubelet/pods/ccdd8d36-35a9-41b0-b215-1d0df5ba5df0 this uid directory will be deleted & replaced with new pod uid
+# check with mongo-compass also we lost the data.
+# 2. if pod crashes we lost the data
+
+3. if we want to persist the data beyond the lifecycle of the pod, i.e. at node level at some host. need to use hostpath volume.
+
+
+vim dep.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        args: ["--dbpath", "/data/db"]
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: "praveen"
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: "praveen@123"
+        volumeMounts:
+        - mountPath: /data/db
+          name: payment-db
+      volumes:
+      - name: payment-db
+        hostPath:
+          path: /praveen
+          
+-----------------------------------
+kubectl replace -f dep.yaml --force
+
+kubectl get po -o wide
+
+kubectl get po -o yaml
+
+## /praveen -> this directory will be created on the worker node where the pod is scheduled.
+   but we need to ensure pods need to be scheduled on the same node.
+                              if on diff node: it will create /praveen directory there & will persist the data.
+## 1hr                            
+
+## mongo-compose
+
+create a database & insert default file 
+
+kubectl delete po 
+
+## mongo-compose: if pod scheduled to 
+                                    diff node, we don't see any database here. 
+                                    same node,  database will be present here.
+
+
+
+### but if the node itself is deleted , we can add one more node , pods will run on that node. but we will lose the data.
+
+node is k8s native , but nfs or any other storage solutions are external to the kubernetes.so we need to make sure network connectivity b/n nfs & k8s.
+
+## some use case of diff volumes in real time:
+
+pod level volume: one application is pulling the data from the weather department & updating the data inside the volume rather than directly giving it to my pod , i need somewhere to write the data , from there webserver take the data & serve to the customer.
+
+hostpath volume use case: if we need to supply any configuration to your application, rather than placing that info required while bootstrapping , we try to  put it on the host itself . In run time , it will refer to that configuration.
+If application data is very important , to persist we use nfs/cloud storage.
+ -------------------------
+1hr26 min: nfs
+
+kubectl apply -f  static-nfs-pv.yml
+# pv is not specific to your cluster , it is referring to nfs server. pv is like a soft link to nfs.
+persist the data which is generated by my application inside /srv/nfs/kubedata.
+ if it is awsEBS we will refer out credentials inside the secrets (or) we can mention creds here in pv yaml config.
+  
+kubectl apply -f static-nfs-pvc.yml
+ 
+vim dep.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        args: ["--dbpath", "/data/db"]
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: "praveen"
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: "praveen@123"
+        volumeMounts:
+        - mountPath: /data/db
+          name: payment-db
+      volumes:
+      - name: payment-db
+        persistentVolumeClaim:
+          claimName: nfs-static-claim1
+
+
+
+# claim name: nfs-static-claim1
+ 
+-----------------------------------
+kubectl apply -f dep.yaml
+
+## mongo-compass
+create database: 
+[imp-data   user-info ]
+
+kubectl get po -o wide
+delete that node  [pod will schedule to another node] 
+verify the data, should persist beyond cluster lifecycle.
+
+## verify from  mongo-compass
+
+
+1hr54min: Dynamic Volume provision    
+       we can extend the volume in dynamic provision: update in pvc yaml & try (depends on driver & storage )
+       https://github.com/syedmudasir20/kubernetes-content/blob/main/rbac.yml
+       https://github.com/syedmudasir20/kubernetes-content/blob/main/deployment.yml
+       https://github.com/syedmudasir20/kubernetes-content/blob/main/class.yml
+       https://github.com/syedmudasir20/kubernetes-content/blob/main/pvc-nfs.yml
+       
+       install internal storage provider plugin  
+       create 1).deployment for client provisioner
+              2).storage class 
+              3).create pvc (then pv created automatically)
+              
+              If cpu & memory is more , (autoscaling)k8s will create another pod to serve. same case for node in aws use Karpenter  tool(integrate Karpenter with aws eks) , not applicable node autoscaling in case of on-premise.
+              
+              
+# while deleting go with reverse order: first application(pod/deploy/sts),pvc & then pv
+(data read/write):  container -> pod -> node -> nfs 
+ useful for accessmodes: ex.readwrite once: only one node will write to nfs server.
+ ReadWriteOncePod: access mode :if you want to ensure that only one pod across the whole cluster can read that PVC or write to it.
+ 
+ 
+Q.Input traffic is high, read/write is slow, deployment size is high, which storage type will improve the read/write performance.
+A: To withstand so many transactions : kafka database. depends on database Architecture.(high data throughput)
+  
+Q.pv/pvc can be configured to multiple pods (is it good practice , any way all pods with diff pv/pvc will write to node then to nfs storage what is the diff? (we didn't mention ReadWriteOncePod))
+
+same pv/pvc diff mountpath
+
+pv/pvc binding is one to one, but we can use it for multiple applications.
+#How to do volume expansion if it is full? Is there any down time? (may be based on storage class,pvc) 
+messaging services: kafka,redis,elasticsearch will go with sts (based on database architecture: mysql,mogo,kafka)
+
+if we kill the main process
+1.In container :pod will restart it till it comes up with the main process to serve the requests.
+2.In vm restart won't happen because there is no k8s pod.
+
+Is there any tool that if we/someone speaks, then convert that input to text and provide a document for that.
+1.Google Docs Voice Typing, 2.Dragon NaturallySpeaking,3.Microsoft Word Dictate, 4.Otter.ai, 5.Speechnotes
+---------------------------------------------------------------------------------
+Day-11  : excelidraw
+https://k21academy.com/topic/231022-cka-day-11-configmapk8s-security-context-secrets-advance-networking-ingress-resource-ingress-controller/
+        
+vim deploy.yaml     # this deploy having password as env.
+# create secret & cm instead # use k21 docs
+vim mariadb-deployment.yml # k21 docs(after using cm & secrets in manifest)
+    we can use 1.env,2.envfrom & 3. volumemounts for cm
+    (restrict user with RBAC give only write permission , but not read 
+    so he can't read, by using kubectl get secret -o yaml/json or by editing the secret).
+
+kubectl run app1 --image alpine -- sleep 1d (otherwise it will completed state)  
+kubectl exec app1 -it -- sh
+touch /hackerfile
+
+we should leave container free of manipulation
+how to restrict the user not allow anything inside a pod
+how to inform my pod to manage my container , don't allow anyone to create anything inside the container.don't allow anyone to work as root user inside the container.
+allow them as non-root users.
+
+https://github.com/fazlurkh/pods/blob/main/security-context.yaml
+
+# add security-context at pod/container level
+kubectl apply -f security-context.yaml
+capsh --print
+host root user will have more privileges , compared to container root user( exec into a pod)
+
+https://github.com/fazlurkh/pods/blob/main/security-context-3.yaml
+if you want to create container inside a container (give all permission to the container as like host)
+by adding this line: privileged: true
+
+git clone https://github.com/fazlurkh/pods.git
+cd pods
+kubectl apply -f security-context-3.yaml
+capsh --print
+kubectl exec security-context-demo-3 -it -- sh
+capsh --print
+
+we can set this in Dockerfile level also (security-context)
+if we set security-context both at pod & container : container level will take precedence.
+
+wget https://github.com/fazlurkh/pods
+don't use wget for directories , it will download as file only.
+
+## install bare metal ingress controller (from k8s official docs)
+load balancer ip is configured with domain name(route53) (www.praveen.com)
+
+(fqdn provider) domain name -> load balancer -> ingress controller -> ingress rules(diff paths)-> services -> pods.
+load balancer handles external traffic : https
+ingress controller handles internal traffic : http
+
+kubectl apply -f  apps-services.yml
+kubectl apply -f  webapp-ingress.yml
+
+kubectl explain ing
+kubectl explain ingress
+
+kubectl edit ing webapp-ingress -> change the hostname: www.sr.com
+
+https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal-clusters
+#bare-metal-clusters: k8s cluster bootstrapped manually with kubeadm,kubespray (not going with any hosted solution like eks/aks/gke) 
+
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
+
+kubectl apply -f deploy.yaml
+
+
+
+kubectl get all  -n ingress-nginx
+
+service/ingress-nginx-controller             LoadBalancer   10.104.49.209   <pending>
+
+## ** clusterIp will be created for both nodeport & load balancer type services also ?
+
+curl -H "Host: www.sr.com" cluetrip/webapp1  ;  [cluetrip: fqdn we are using is dummy].
+
+[service/ingress-nginx-controller    LoadBalancer EXTERNAL-IP <pending>   CLUSTER-IP: 10.111.242.15] : use this cluster ip for accessing the pods with ingress]
+
+when we hit the ingress service clusterip: traffic is routed among the pods based on the rules.
+
+
+curl -H "Host: www.sr.com" 10.111.242.15/webapp1
+<h1>This request was processed by host: webapp1-6486c5c977-qr45t</h1>
+curl -H "Host: www.sr.com" 10.111.242.15/webapp2
+<h1>This request was processed by host: webapp2-77d7cf549-8bxss</h1>
+curl -H "Host: www.sr.com" 10.111.242.15/
+<h1>This request was processed by host: webapp3-5cb9ff8777-pd9hc</h1>
+curl -H "Host: www.sr.com" 10.111.242.15/w
+<h1>This request was processed by host: webapp3-5cb9ff8777-w88db</h1>
+curl -H "Host: www.sr.com" 10.111.242.15/we
+<h1>This request was processed by host: webapp3-5cb9ff8777-w88db</h1>
+---------------------------------
+=> ingress controller looks for ingress rules based on that it will route the traffic
+ex. if we have multiple ingress (kubectl get ing), then based on hostname it picks the ingress rule, the route the traffic.
+
+Q.create the token manually , for 'service account' to access dashboard
+=> one load balancer output , we can have multiple ingress-controllers.
+
+
+domain name(aws/azure/godaddy) => lb ip => ingress controller => rules => service(any api)
+path based / host based : once ingress controller picks the rules , it is all internal communication based on the rules ,it won't go again for the dns. (sr.com, sr.com/user, sr.com/app : this will route the traffic internally based on the rules , won't go back again to the dns level)
+
+---------------------------------------------------------------------------------------------------
+
+Day -12:
+1hr14min: NETPOL
+to restrict communication b/n the pods, by default any pod can communicate with any pod present in the cluster.
+we need to install networking plugin : ex.weavenet
+https://kubernetes.io/docs/concepts/services-networking/network-policies/
+kubectl explain netpol
+
+kubectl run web --image nginx -l app=web --expose --port 80
+
+vim deny-all.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress: []
+  
+# kubectl apply -f deny-all.yaml
+kubectl run -it --rm --image alpine test-pod -- sh
+wget -qO- --timeout=2 http://web  (web=name of svc/ip also fine)
+
+kubectl delete netpol web-deny-all
+
+kubectl run -it --rm --image alpine test-pod -- sh
+wget -qO- --timeout=2 http://web  (now we can communicate)
+
+kubectl run apiserver --image=ahmet/app-on-two-ports --labels="app=apiserver"
+
+kubectl create service clusterip apiserver \
+--tcp 8001:8000 \
+--tcp 5001:5000
+
+kubectl get svc
+curl 10.102.250.42:8001
+curl 10.102.250.42:5001
+
+## allow traffic only from 5000 port
+vim port-network.yaml # we can edit netpol while it is running
+        
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-allow-5000
+spec:
+  podSelector:
+    matchLabels:
+      app: apiserver
+  ingress:
+  - ports:
+    - port: 5000
+    from:
+    - podSelector:
+        matchLabels:
+          role: monitoring
+
+ 
+ kubectl run test-$RANDOM --rm -i -t --image=alpine -- sh
+ 
+ wget -qO- --timeout=2 http://apiserver:8001  (apiserver=svcname)       
+      
+ wget -qO- --timeout=2 http://10.102.250.42:5001
+ wget -qO- --timeout=2 http://apiserver:5001/metrics
+
+
+### https://kubernetes.io/docs/concepts/services-networking/network-policies/ 
+scroll down click on recipes
+
+************
+https://github.com/ahmetb/kubernetes-network-policy-recipes (practise all these scenarios for prod & cka exam)
+************
+1hr48 min : Admission Controllers
+https://etherpad.opendev.org/p/ckackad09092023
+
+
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml
+
+https://kubernetes.io/blog/2019/08/06/opa-gatekeeper-policy-and-governance-for-kubernetes/ (search with opa at k8s docs)
+
+------------------------------------------------------------------------------------------------
+
+Day-13
+
+https://k21academy.com/topic/231029-cka-day-13-statefulset-headless-service-side-car-pattern-kubernetes-maintenance-and-troubleshooting-highly-available-cluster-cluster-upgrade-etcd-backup-and-restore/
+
+
+just think about raw data base installation | setup database server on bare metal cluster: consider same for sts
+
+1.seperate pv/pvc for each replica of sts : pod; each pod is given unique hostname
+2.ordered creation of pods
+3.we just need to write all the stuff to one pod, svc will do load balancing that's again a problem?
+we don't need (internal) load balancing capability of clusterIp, so create headless service, since we don't get any ip for this service, will be using dns name to route traffic to a particular pod.
+-----------------------------
+vim sts.yaml
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  serviceName: "mongo"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.0.8
+          startupProbe:
+            exec:
+              command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+
+vim headless-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+    name: mongo
+  clusterIP: None
+  selector:
+    app: mongo
+    
+    
+    ## didn't create any pv/pvc from the above manifest
+------------------------------------
+we know whom to route the traffic , without svc we don't get dns entry (pod won't be populated inside the dns) into the k8s cluster. That's why we need to create headless svc.
+            
+  kubectl apply -f  sts.yaml
+  kubectl scale sts mongo --replicas 6
+  kubectl apply -f headless-svc.yaml
+  
+  but for the above only 1 pv.pvc is created: 6 pv/pvc should be created in general 
+  persistentvolumeclaim/mongodb-pvc   Bound    mongodb-pv                     1Gi        RWO,ROX           
+  
+  since we don't have any ip to headless service , we can only access this application  with dns name            
+
+https://www.mongodb.com/docs/manual/reference/method/rs.initiate/
+
+
+kubectl exec mongo-0 -it -- mongo
+
+rs.initiate(
+   {
+      _id: "myReplSet",
+      version: 1,
+      members: [
+         { _id: 0, host : "mongodb-0.mongo.defalut.svc.cluster.local:27017" },
+         { _id: 1, host : "mongodb-1.mongo.defalut.svc.cluster.local:27017" },
+         { _id: 2, host : "mongodb-2.mongo.defalut.svc.cluster.local:27017" }
+      ]
+   }
+)
+
+exit
+
+# whichever the pod we add above configuration , then it will act as master.
+
+kubectl exec mongo-0 -it -- mongo
+rs.status() # not working for me.
+
+db.chakra.insert({"learning": "kubernetes"})
+db.chakra.find()
+
+
+kubectl exec mongo-0 -it -- mongo
+rs.slaveOk() # one time action on each slave node to get the info from master which is anyway sync
+db.chakra.find()   # check whether data is replicated or not.
+ 
+45 min doubts
+*********************************
+pv/pvc facilitating to store the data remotely(nfs)
+
+after deleting the pv: what happens to the data.volume is not the concept of k8s.
+pv reclaim policy: if we delete the pv, data will still exist on nfs
+                   
+                1. delete policy will delete the data on nfs also
+                2. reclaim policy can still persist the data on nfs for future claim
+                
+**********************************
+sts will scale the pods , it will create pv,pvc but can't delete the pv,pvc both or only pvc  
+sts didn't have rs , but it has scaling feature for pods
+ for deploying database : refer k8s docs, for configuring : refer that particular database docs (ex.mongo)
+
+****************************************
+
+2307: kalyan mahalingam  (https://github.com/ashishrpandey/kubernetes-training/)
+
+Day -10  (2401 batch: for pv/pvc)
+
+https://k21academy.com/topic/230909-cka-day-10-introduction-to-volume-and-persistent-storagepv-pvc/
+
+etcd will not store application data,facilitates to store data in diff ways, stores only k8s api-resources own data
+
+52 min: hostpath volume directory should be automatically created on the host i.e. on the worker node where the pod is running, not on the master node.
+pv is virtual part of nfs 
+1h57 min
+
+kubectl delete all --all  (but pv,pvc won't be deleted)
+k8s does not store the data, they just facilitate the storage.
+pv,pvc won't store the data , passes the data to reach the destination ->  harddisk/nfs
+What kind of storage is this pv(filesystem,block?)
+
+if we capture data in database pv/pvc not required
+if the storage is required pv/pvc required
+but if we keep the database also in a pod, pv/pvc required. if database is somewhere externally then pv/pvc not required
+
+---------------------
+Day -11
+## nice explanation : ethorpod for commands & docs
+https://k21academy.com/topic/230910-cka-day-11-configmaps-introduction-to-hpa-and-configuring-autoscaling-with-hpa-matric-server/
+
+k8s itself is stateless application 
+volume: facilitates your data to store somewhere 
+
+configmap: from 50 min to 1hr32min
+          
+kubectl create cm fortune-config --from-file=configmap-files/
+
+kubectl apply -f fortune-pod-configmap-volume.yaml
+
+kubectl exec -it fortune-configmap-volume -c web-server -- sh
+/ # cd /etc/nginx/conf.d
+/etc/nginx/conf.d # ls
+my-nginx-config.conf  sleep-interval
+
+#the entire key-value which are there in etcd , was copied as files.
+i.e etcd on master: copy of files from master to worker nodes  (without ftp,scp any other tool)
+## it is placing as files only ;
+(files -> cm -> files on worker node) use cm as volume in pod manifest -> pod is storing as files on worker nodes (create configmap with files)
+use the cm as volume: 
+Once created, configmap can also be edited.
+
+
+
+Day -12
+https://k21academy.com/topic/230916-cka-day-12-dynamic-volume-init-containers-resource-quota-ingress-controller/
+
+nfs is external entity not k8s part : so need to define with service a/c
+
+network entity of k8s is external, etcd is also external somehow
+volumes are necessary because of data isolation
+
+module-3:
+ConfigMap: 
+configuration data can be used as 
+1.environment variables
+2.command line arguments for a container
+3.config files in a volume
+
+recreate the pod / no need to recreate the image : to reflect the changes
+
+
+2hr: ingress controller : k21 docs
+
+alb:  controls instance 
+ingress: controls  pods
+
+--------------------------------------------------
+
+2307 - Day-14 : k21 docs
+https://k21academy.com/topic/230923-cka-day-14-secrets-kubernetes-security-rbac-kube-config-network-policies-admission-controller/
+
+
+****** security keywords: ca,csr,key,ssl,tls,openssl
+1.Application security(NETPOL), 
+2.Data security(SECRETS),  
+3.user/Identity security(RBAC).
+
+NETPOL: setting protocols for access to inbound(ingress) requests and outbound (egress) responses.
+
+***** Need to set netpol to communicate one pod with another in a k8s cluster.
+by default they will communicate with each other until & unless any policy is set, but we are setting netpol for security purposes.
+with default 'NETPOL' : any pod can be created in any worker node, pod to pod communication should happen in the same node or diff node.
+
+*** understand ingress/egress concepts with :aws security group/NACL
+
+
+
+## 2h28 min:  Admission Controller
+API SERVER: Authenticate,Authorise,Admission control (validation of extra layer)
+
+Day -15: k21 docs & ethorpod
+till 1hr 4min sts
+sts: intersection of volume & controller (ex.deployment)
+
+sts (is seperate controller) does not depend on  replica set to produce replicas
+in deployment : 2 replicas:  if we delete one pod, when it is running ,other pod will come to running state with diff name
+
+in sts: 2 replicas:  if we delete one pod, when it is running ,other pod will never come to running state, when the previous pod deletes completely , then only the new pod comes & name will be the same.
+
+sts -> data persistent : stick session
+headless service: won't act as load balancer , which gives direct access to pod itself(samepod)
+                 can't be accessed from browser(outside)
+Ingress : one layer above the service; by using 'ingress' we can club multiple services
+
+-------------------------------
+
+Act as senior DevOps engineer  read the below yaml manifests redis-cm.yaml, redis-pod.yaml
+name: in configmap is diff
+name mentioned in pod volume & volume mount
+
+what is the relation b/n pod & cm here 
+
+cat redis-cm.yaml
+apiVersion: v1
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru
+kind: ConfigMap
+metadata:
+  name: example-redis-config
+  namespace: default
+
+cat redis-pod.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+  - name: redis
+    image: redis
+    env:
+    - name: MASTER
+      value: "true"
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "0.1"
+    volumeMounts:
+    - mountPath: /redis-master-data
+      name: data
+    - mountPath: /redis-master
+      name: config
+  volumes:
+    - name: data
+      emptyDir: {}
+    - name: config
+      configMap:
+        name: example-redis-config
+        items:
+        - key: redis-config
+          path: redis.conf
+
+1. why volume name & cm name are different , explain in detail  (seems this is recommended approach)
+
+2. can we use volume name & cm name same in above  pod configuration 
+
+3. if volume name & cm name are different, how pod came to know about the cm how it is using , explain clearly.
+
+------------------
+https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+
+can role & role binding only once , can one role attach to multiple rolebindings ?
+
+# How to add users to a group in k8s just like linux only
+kind: ClusterRoleBinding
+subjects:
+- kind: Group
+
+(kubectl create clusterrolebinding serviceaccounts-cluster-admin \
+  --clusterrole=cluster-admin \
+  --group=system:service accounts)
+
+# how to find out which 'kind: Role' is belongs to which 'apiGroups: [""]'
+      [""] => why it is called as core apiGroups, what/how many types of apiGroups in k8s / apiVersion
+--------------------------------------
+
+nfs mount point lost on worker nodes ? (after restart)
+
+mount -t nfs 172.210.81.19:/srv/nfs/kubedata /mnt
+
+mysql -h 172.210.81.19 -P 30306 -u root -p
+
+kubectl set image statefulset/web-statefulset my-container=11905510/k21academy:1.1 mysql-container=mysql:8.0 --record=true
+
+Act as a senior DevOps engineer , in a k8s cluster we configured dynamic pv from nfs volume , if we delete the pv, still the data exist on nfs server
+
+
+
