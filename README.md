@@ -49,8 +49,9 @@ https://github.com/veggiemonk/awesome-docker
 ### example github pages  argocd
 ### example github pages jenkins
 
-hcl```
+
 ## github docker projects
+```
 https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
@@ -58,9 +59,9 @@ https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices
 https://hackernoon.com/bookmark-this-18-awesome-github-repositories-for-2024
 ```
 
-```
-#### Useful Repos
 
+#### Useful Repos
+```
 https://dev.to/jon_snow789/20-github-repositories-every-developer-should-bookmarkhigh-value-resources-4jm6
 
 https://github.com/trimstray/test-your-sysadmin-skills
@@ -79,9 +80,8 @@ https://pages.awscloud.com/GLOBAL_NCA_LN_ARRC-program-A300-2023.html   ## $300 a
 
 https://devopscube.com/devops-projects/
 ```
-```
 ### python sources
-
+```
 1.https://www.fullstackpython.com/
 
 2. https://pythonspot.com/
@@ -95,8 +95,8 @@ https://devopscube.com/devops-projects/
 ### projects : https://github.com/ndleah/python-mini-project
 ```
 
-```
 ### other
+```
 https://github.com/Masterminds/learning-helm/
 
 https://github.com/AmrAlaaYassen/ArgoCD-ApplicationSet-Demo
