@@ -56,7 +56,9 @@ https://github.com/harshartz/Jenkins-CI-CD-Pipeline-with-Docker-and-GitHub
 https://dev.to/ankit01oss/7-github-projects-to-supercharge-your-docker-practices-2i80
 
 https://hackernoon.com/bookmark-this-18-awesome-github-repositories-for-2024
+```
 
+```
 #### Useful Repos
 
 https://dev.to/jon_snow789/20-github-repositories-every-developer-should-bookmarkhigh-value-resources-4jm6
@@ -92,6 +94,7 @@ https://devopscube.com/devops-projects/
 
 ### projects : https://github.com/ndleah/python-mini-project
 ```
+
 ```
 ### other
 https://github.com/Masterminds/learning-helm/
@@ -106,6 +109,8 @@ https://github.com/vikash-kumar01/Kubernetes_Project
 
 https://devopsdays.io/
 ```
+
+```
 ### eks
 ### marcincuber/eks  : https://github.com/marcincuber/eks
-
+```
