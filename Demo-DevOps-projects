@@ -3,22 +3,24 @@ https://landscape.cncf.io/
 #### search github "selcet any projects from above link" demo
 
 #####
-1. https://github.com/open-telemetry/opentelemetry-demo      ##### complex
+1. https://github.com/open-telemetry/opentelemetry-demo      ## complex
 
-2. https://github.com/backstage/demo        ##### complex  
+2. https://github.com/backstage/demo        ## complex  
 
 3. https://github.com/spring-projects/spring-petclinic
 
 4. https://istio.io/latest/docs/examples/bookinfo/
 
-5. https://github.com/dockersamples/example-voting-app
+5. https://github.com/dockersamples/example-voting-app      ## priority : abhi aks
 
-6. https://github.com/fluxcd/flux2-kustomize-helm-example
+6. https://github.com/instana/robot-shop   ## E commerce project : ABHI EKS,AKS,GKE   (Advanced pv,pvc.sc in k8s)
 
-7. https://github.com/redis-developer/basic-redis-chat-app-demo-python
+7. https://github.com/fluxcd/flux2-kustomize-helm-example     ## For GitOps
 
-8. https://github.com/dasniko/keycloak-bookshop-demo
+8. https://github.com/redis-developer/basic-redis-chat-app-demo-python
 
-9. https://github.com/sysdiglabs/security-playground        ##### write k8s manifests & deploy
+9. https://github.com/dasniko/keycloak-bookshop-demo   ## Java advanced project
 
-10. https://github.com/CircleCI-Public/circleci-demo-javascript-react-app
+10. https://github.com/sysdiglabs/security-playground        ## write k8s manifests & deploy
+
+11. https://github.com/CircleCI-Public/circleci-demo-javascript-react-app
