@@ -10,6 +10,17 @@ info of diff repos for DevOps &amp; cloud
 info of diff repos for DevOps &amp; cloud
 
 ```
+## DevOps : github repos
+https://github.com/bregman-arie/devops-exercises
+
+https://github.com/trimstray/the-book-of-secret-knowledge (cheat
+sheet,manuals,blogs,videos )
+
+https://github.com/joseadanof/awesome-cloudnative-trainings (free training &
+cert from aws,ibm,mogo..k8s.cloud native tools)
+```
+
+```
 https://github.com/AmanPathak-DevOps/30DaysOfKubernetes/tree/master
 
 https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero
