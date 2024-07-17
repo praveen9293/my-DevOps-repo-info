@@ -1,4 +1,5 @@
-## TASK: setup multi-master node highly available kubernetes cluster with kubeadm & kops on AWS CLOUD before sep 30 2024
+## TASK: 1.setup multi-master node highly available kubernetes cluster with kubeadm & kops on AWS CLOUD before sep 30 2024
+         2.set up & configure jenkins, login with domain name rather then ip from browser
 
 
 ### Teleport
