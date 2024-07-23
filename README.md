@@ -127,6 +127,17 @@ https://devopsdays.io/
 ```
 
 ```
+https://thedevops.guide/
+
+https://github.com/rishabkumar7/devops-qr-code
+
+https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
+
+https://github.com/marketplace/actions/deploy-to-kubernetes-cluster
+
+```
+
+```
 ### eks
 ### marcincuber/eks  : https://github.com/marcincuber/eks
 ```
