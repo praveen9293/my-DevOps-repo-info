@@ -107,6 +107,11 @@ https://devopscube.com/devops-projects/
 5. https://learnpython.org/ 
 
 ### projects : https://github.com/ndleah/python-mini-project
+
+https://www.w3schools.com/python/
+
+https://www.tutorialspoint.com/python/index.htm
+
 ```
 
 ### other
