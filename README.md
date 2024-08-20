@@ -96,21 +96,32 @@ https://devopscube.com/devops-projects/
 ```
 ### python sources
 ```
-1.https://www.fullstackpython.com/
+1. https://learnpython.org/ 
 
-2. https://pythonspot.com/
+2. https://www.practicepython.org/
 
-3. https://diveintopython3.net/
+3. https://www.w3schools.com/python/
 
-4. https://python.swaroopch.com/
+4. https://www.tutorialspoint.com/python/index.htm
 
-5. https://learnpython.org/ 
+5.https://www.fullstackpython.com/
+
+6. https://pythonspot.com/
+
+7. https://diveintopython3.net/
+
+8. https://python.swaroopch.com/
+
+## Tools
+
+1. https://www.onlinegdb.com/online_python_compiler
+
+2. https://www.programiz.com/python-programming/online-compiler/
+
+https://pynative.com/python-if-else-and-for-loop-exercise-with-solutions/
 
 ### projects : https://github.com/ndleah/python-mini-project
 
-https://www.w3schools.com/python/
-
-https://www.tutorialspoint.com/python/index.htm
 
 ```
 
