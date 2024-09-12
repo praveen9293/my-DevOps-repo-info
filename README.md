@@ -57,12 +57,7 @@ https://github.com/cicdops/awesome-ciandcd
 https://github.com/veggiemonk/awesome-docker
 ```
 
-### example github pages  Dockerfile
-### example github pages  docker compose
-### example github pages  github actions
-### example github pages  argocd
-### example github pages jenkins
-
+### example github pages for:   Dockerfile, docker compose, github actions, argocd, jenkins.
 
 ## github docker projects
 ```
